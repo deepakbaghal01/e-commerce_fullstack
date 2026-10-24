@@ -28,6 +28,10 @@ const Home = () => {
       setError(false);
       try {
         const response = await api.get('/products');
+        if (!Array.isArray(response.data?.products)) {
+          throw new Error('Unexpected product API response');
+        }
+
         if (active) {
           setProducts(response.data.products);
           setSaleProducts(response.data.products.filter(

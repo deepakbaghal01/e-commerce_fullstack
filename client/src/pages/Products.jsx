@@ -42,7 +42,11 @@ const Products = () => {
         if (category) params.append('category', category);
         if (sort) params.append('sort', sort);
 
-        const response = await api.get(`/products?${params.toString()}`);
+        const query = params.toString();
+        const response = await api.get(query ? `/products?${query}` : '/products');
+        if (!Array.isArray(response.data?.products)) {
+          throw new Error('Unexpected product API response');
+        }
         
         // Filter by price range if set
         let filteredProducts = response.data.products;

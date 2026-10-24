@@ -1,7 +1,9 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: import.meta.env.DEV
+    ? '/api'
+    : 'https://e-commerce-fullstack-xdfe.onrender.com/api',
   headers: {
     'Content-Type': 'application/json'
   }
