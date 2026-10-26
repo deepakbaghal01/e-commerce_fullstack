@@ -180,6 +180,8 @@ MONGODB_URI=mongodb+srv://<db_username>:<db_password>@cluster0.kcp6lkp.mongodb.n
 
 Keep the completed URI only in `server/.env`; do not commit it or put it in the frontend. The backend waits for MongoDB to connect before it starts listening, and exits with an error if the URI is missing or the connection fails.
 
+For production, set `VITE_API_URL` in the frontend hosting environment to the backend's base URL (for example, `https://your-backend.onrender.com`), then rebuild/redeploy the frontend. The client adds `/api` automatically. Set `CLIENT_ORIGINS` in the backend environment to the exact deployed frontend origin so browser requests are allowed.
+
 Generate each secret locally; never commit real credentials:
 
 ```bash

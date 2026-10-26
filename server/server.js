@@ -8,9 +8,21 @@ dotenv.config();
 const connectDB = require('./config/db');
 
 const app = express();
+const clientOrigins = (process.env.CLIENT_ORIGINS || '')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+if (process.env.NODE_ENV !== 'production') {
+  clientOrigins.push('http://localhost:3000');
+}
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: (origin, callback) => {
+    callback(null, !origin || clientOrigins.includes(origin));
+  }
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
