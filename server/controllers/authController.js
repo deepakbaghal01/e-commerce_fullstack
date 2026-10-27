@@ -149,6 +149,22 @@ const deliverCode = async (user, phoneCode) => {
   };
 };
 
+const sendRegistrationError = (error, res, fallbackMessage) => {
+  if (error.code === 11000) {
+    return res.status(409).json({
+      success: false,
+      message: 'An account with this email already exists. Please log in or use a different email.'
+    });
+  }
+  if (error.name === 'ValidationError') {
+    return res.status(400).json({ success: false, message: error.message });
+  }
+  return res.status(500).json({
+    success: false,
+    message: fallbackMessage
+  });
+};
+
 const createChallenge = async (user) => {
   const challengeToken = generateChallengeToken();
   const phoneCode = generateCode();
@@ -230,13 +246,11 @@ exports.register = async (req, res) => {
     return await startRegistration(req, res, false);
   } catch (error) {
     console.error('Registration could not be started:', error.message);
-    if (error.name === 'ValidationError') {
-      return res.status(400).json({ success: false, message: error.message });
-    }
-    return res.status(500).json({
-      success: false,
-      message: 'Registration could not be started. Please try again.'
-    });
+    return sendRegistrationError(
+      error,
+      res,
+      'Registration could not be started. Please try again.'
+    );
   }
 };
 
@@ -248,13 +262,11 @@ exports.registerSeller = async (req, res) => {
     return await startRegistration(req, res, true);
   } catch (error) {
     console.error('Seller registration could not be started:', error.message);
-    if (error.name === 'ValidationError') {
-      return res.status(400).json({ success: false, message: error.message });
-    }
-    return res.status(500).json({
-      success: false,
-      message: 'Seller registration could not be started. Please try again.'
-    });
+    return sendRegistrationError(
+      error,
+      res,
+      'Seller registration could not be started. Please try again.'
+    );
   }
 };
 

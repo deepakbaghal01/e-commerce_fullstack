@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const path = require('path');
 const Product = require('../models/Product');
 const User = require('../models/User');
 
-dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
 
 const demoProducts = [
   {
@@ -500,6 +501,10 @@ const addDemoProducts = async () => {
     }
 
     await mongoose.connect(process.env.MONGODB_URI);
+    const existingProductCount = await Product.countDocuments();
+    console.log(
+      `Connected to ${mongoose.connection.host}/${mongoose.connection.db.databaseName}.${Product.collection.name} (${existingProductCount} existing products).`
+    );
 
     const existingProduct = await Product.findOne().select('owner').lean();
     const seller = existingProduct

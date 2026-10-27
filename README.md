@@ -180,7 +180,7 @@ MONGODB_URI=mongodb+srv://<db_username>:<db_password>@cluster0.kcp6lkp.mongodb.n
 
 Keep the completed URI only in `server/.env`; do not commit it or put it in the frontend. The backend waits for MongoDB to connect before it starts listening, and exits with an error if the URI is missing or the connection fails.
 
-For production, set `VITE_API_URL` in the frontend hosting environment to the backend's base URL (for example, `https://your-backend.onrender.com`), then rebuild/redeploy the frontend. The client adds `/api` automatically. Set `CLIENT_ORIGINS` in the backend environment to the exact deployed frontend origin so browser requests are allowed.
+For this deployment, set `VITE_API_URL=https://e-commerce-fullstack-vdhw.onrender.com` in Vercel and redeploy the frontend; the client adds `/api` automatically. Set `CLIENT_ORIGINS=https://client-iota-snowy.vercel.app` in Render. Multiple exact frontend origins can be comma-separated. Keep `OTP_VERIFICATION_ENABLED=false` in Render to disable OTP temporarily; with OTP disabled, Twilio variables and `OTP_SECRET` are not needed for registration/login. `MONGODB_URI` and a `JWT_SECRET` of at least 32 characters are still required.
 
 Generate each secret locally; never commit real credentials:
 

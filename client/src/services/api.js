@@ -1,7 +1,10 @@
 import axios from 'axios';
 
-const configuredApiUrl = import.meta.env.VITE_API_URL?.trim().replace(/\/+$/, '');
-const apiBaseUrl = import.meta.env.DEV || !configuredApiUrl
+const defaultProductionApiUrl = 'https://e-commerce-fullstack-vdhw.onrender.com';
+const configuredApiUrl = (import.meta.env.VITE_API_URL || defaultProductionApiUrl)
+  .trim()
+  .replace(/\/+$/, '');
+const apiBaseUrl = import.meta.env.DEV
   ? '/api'
   : configuredApiUrl.endsWith('/api')
     ? configuredApiUrl
