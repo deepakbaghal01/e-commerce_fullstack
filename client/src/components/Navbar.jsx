@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import { useTheme } from '../context/ThemeContext';
 
 const categories = [
   { label: 'For you', to: '/products' },
@@ -16,6 +17,7 @@ const categories = [
 
 const Navbar = () => {
   const { user, isAuthenticated, isAdmin, isSeller, isBuyer, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const { getTotalItems } = useCart();
   const [menuOpen, setMenuOpen] = useState(false);
   const [search, setSearch] = useState('');
@@ -23,7 +25,7 @@ const Navbar = () => {
   const totalItems = getTotalItems();
 
   const closeMenu = () => setMenuOpen(false);
-  const accountPath = isAdmin ? '/admin' : isSeller ? '/seller-dashboard' : isBuyer ? '/my-orders' : '/login';
+  const accountPath = isAdmin ? '/admin' : isSeller ? '/seller-dashboard' : isBuyer ? '/account' : '/login';
   const accountLabel = isAuthenticated ? 'My account' : 'Log in';
   const linkClass = 'block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-900';
 
@@ -92,6 +94,23 @@ const Navbar = () => {
           {searchForm()}
 
           <div className="ml-auto flex shrink-0 items-center gap-1 sm:gap-2">
+            <button
+              type="button"
+              onClick={toggleTheme}
+              aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+              title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+              className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-slate-700 transition hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-700"
+            >
+              {theme === 'light' ? (
+                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                  <path d="M12 3v2m0 14v2M5.64 5.64l1.42 1.42m9.88 9.88 1.42 1.42M3 12h2m14 0h2M5.64 18.36l1.42-1.42m9.88-9.88 1.42-1.42M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z" strokeWidth="1.8" strokeLinecap="round" />
+                </svg>
+              ) : (
+                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                  <path d="M20.2 15.3A8.5 8.5 0 0 1 8.7 3.8 8.5 8.5 0 1 0 20.2 15.3Z" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              )}
+            </button>
             <Link
               to={accountPath}
               aria-label={accountLabel}
@@ -109,7 +128,12 @@ const Navbar = () => {
                 </svg>
               </summary>
               <div className="absolute right-0 top-full z-50 mt-2 w-52 rounded-xl border border-slate-200 bg-white p-2 shadow-lg">
-                {isBuyer && <Link to="/my-orders" className={linkClass}>My orders</Link>}
+                {isBuyer && (
+                  <>
+                    <Link to="/account" className={linkClass}>My account</Link>
+                    <Link to="/my-orders" className={linkClass}>My orders</Link>
+                  </>
+                )}
                 {isSeller && (
                   <>
                     <Link to="/seller-dashboard" className={linkClass}>Seller dashboard</Link>
@@ -177,7 +201,12 @@ const Navbar = () => {
       {menuOpen && (
         <div id="mobile-navigation" className="border-t border-slate-100 bg-white px-4 py-3 shadow-lg sm:hidden">
           <div className="mx-auto flex max-w-7xl flex-col gap-1">
-            {isBuyer && <Link to="/my-orders" onClick={closeMenu} className={linkClass}>My orders</Link>}
+            {isBuyer && (
+              <>
+                <Link to="/account" onClick={closeMenu} className={linkClass}>My account</Link>
+                <Link to="/my-orders" onClick={closeMenu} className={linkClass}>My orders</Link>
+              </>
+            )}
             {isSeller && (
               <>
                 <Link to="/seller-dashboard" onClick={closeMenu} className={linkClass}>Seller dashboard</Link>

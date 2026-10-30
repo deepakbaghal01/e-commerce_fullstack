@@ -11,6 +11,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Checkout from './pages/Checkout';
 import MyOrders from './pages/MyOrders';
+import MyAccount from './pages/MyAccount';
 import AdminDashboard from './pages/AdminDashboard';
 import AddProduct from './pages/AddProduct';
 import SellerRegister from './pages/SellerRegister';
@@ -35,6 +36,7 @@ function App() {
                 <Route path="/verify-registration" element={<VerifyRegistration />} />
                 <Route path="/seller-register" element={<SellerRegister />} />
                 <Route path="/checkout" element={<Checkout />} />
+                <Route path="/account" element={<MyAccount />} />
                 <Route path="/my-orders" element={<MyOrders />} />
                 <Route path="/admin" element={<AdminDashboard />} />
                 <Route path="/add-product" element={<AddProduct />} />
