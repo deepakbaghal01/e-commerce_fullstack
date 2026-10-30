@@ -53,14 +53,3 @@ exports.authorize = (...roles) => {
     next();
   };
 };
-
-exports.requireVerifiedSeller = (req, res, next) => {
-  if (req.user.role === 'admin') return next();
-  if (req.user.role !== 'seller' || req.user.isVerified !== true) {
-    return res.status(403).json({
-      success: false,
-      message: 'An approved seller account is required to manage product listings.'
-    });
-  }
-  return next();
-};

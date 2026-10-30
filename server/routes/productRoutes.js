@@ -7,15 +7,15 @@ const {
   updateProduct,
   deleteProduct
 } = require('../controllers/productController');
-const { protect, authorize, requireVerifiedSeller } = require('../middleware/auth');
+const { protect, authorize } = require('../middleware/auth');
 
 router.route('/')
   .get(getProducts)
-  .post(protect, authorize('admin', 'seller'), requireVerifiedSeller, createProduct);
+  .post(protect, authorize('admin', 'seller'), createProduct);
 
 router.route('/:id')
   .get(getProductById)
-  .put(protect, authorize('admin', 'seller'), requireVerifiedSeller, updateProduct)
-  .delete(protect, authorize('admin', 'seller'), requireVerifiedSeller, deleteProduct);
+  .put(protect, authorize('admin', 'seller'), updateProduct)
+  .delete(protect, authorize('admin', 'seller'), deleteProduct);
 
 module.exports = router;

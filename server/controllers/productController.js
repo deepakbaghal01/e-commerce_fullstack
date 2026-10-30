@@ -76,13 +76,6 @@ exports.getProductById = async (req, res) => {
 // @access  Private
 exports.createProduct = async (req, res) => {
   try {
-    if (req.user.role === 'seller' && req.user.isVerified !== true) {
-      return res.status(403).json({
-        success: false,
-        message: 'Your seller account must be approved before you can list products.'
-      });
-    }
-
     // Add the current user as the owner
     req.body.owner = req.user.id;
 
