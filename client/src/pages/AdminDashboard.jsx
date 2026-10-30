@@ -25,6 +25,7 @@ const AdminDashboard = () => {
     name: '',
     description: '',
     price: '',
+    compareAtPrice: '',
     category: 'Electronics',
     image: '',
     rating: '0',
@@ -93,9 +94,17 @@ const AdminDashboard = () => {
   const handleProductSubmit = async (e) => {
     e.preventDefault();
     try {
+      const price = Number(productForm.price);
+      const compareAtPrice = productForm.compareAtPrice === '' ? null : Number(productForm.compareAtPrice);
+      if (compareAtPrice !== null && (!Number.isFinite(compareAtPrice) || compareAtPrice <= price)) {
+        window.alert('The original price must be greater than the selling price.');
+        return;
+      }
+
       const productData = {
         ...productForm,
-        price: parseFloat(productForm.price),
+        price,
+        compareAtPrice,
         rating: parseFloat(productForm.rating),
         stock: parseInt(productForm.stock)
       };
@@ -112,6 +121,7 @@ const AdminDashboard = () => {
         name: '',
         description: '',
         price: '',
+        compareAtPrice: '',
         category: 'Electronics',
         image: '',
         rating: '0',
@@ -130,6 +140,7 @@ const AdminDashboard = () => {
       name: product.name,
       description: product.description,
       price: product.price.toString(),
+      compareAtPrice: product.compareAtPrice?.toString() || '',
       category: product.category,
       image: product.image,
       rating: product.rating.toString(),
@@ -263,6 +274,7 @@ const AdminDashboard = () => {
                   name: '',
                   description: '',
                   price: '',
+                  compareAtPrice: '',
                   category: 'Electronics',
                   image: '',
                   rating: '0',
@@ -336,6 +348,21 @@ const AdminDashboard = () => {
                       <option value="Home">Home</option>
                       <option value="Other">Other</option>
                     </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Original price (optional)
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={productForm.compareAtPrice}
+                      onChange={(e) => setProductForm({ ...productForm, compareAtPrice: e.target.value })}
+                      placeholder="Set higher than the selling price for a sale"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <p className="mt-1 text-xs text-gray-500">A higher original price includes this item in Diwali offers.</p>
                   </div>
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-2">

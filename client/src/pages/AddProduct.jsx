@@ -7,6 +7,7 @@ const initialFormData = {
   name: '',
   description: '',
   price: '',
+  compareAtPrice: '',
   category: 'Electronics',
   image: '',
   stock: ''
@@ -45,9 +46,14 @@ const AddProduct = () => {
     }
 
     const price = Number(formData.price);
+    const compareAtPrice = formData.compareAtPrice === '' ? undefined : Number(formData.compareAtPrice);
     const stock = Number(formData.stock);
     if (!Number.isFinite(price) || price < 0) {
       setError('Enter a valid price of 0 or more.');
+      return;
+    }
+    if (compareAtPrice !== undefined && (!Number.isFinite(compareAtPrice) || compareAtPrice <= price)) {
+      setError('The original price must be greater than the selling price.');
       return;
     }
     if (!Number.isInteger(stock) || stock < 0) {
@@ -61,6 +67,7 @@ const AddProduct = () => {
         name: formData.name.trim(),
         description: formData.description.trim(),
         price,
+        ...(compareAtPrice === undefined ? {} : { compareAtPrice }),
         category: formData.category,
         image: formData.image.trim(),
         stock
@@ -310,6 +317,26 @@ const AddProduct = () => {
                   />
                 </div>
                 <p className="mt-1.5 text-xs text-gray-400">Enter the price customers will pay.</p>
+              </div>
+
+              <div>
+                <label htmlFor="product-compare-at-price" className="mb-2 block text-sm font-semibold text-gray-700">Original price (₹)</label>
+                <div className="flex overflow-hidden rounded-xl border border-gray-200 transition focus-within:border-violet-500 focus-within:ring-4 focus-within:ring-violet-100">
+                  <span className="flex items-center border-r border-gray-200 bg-gray-50 px-4 font-semibold text-gray-500">₹</span>
+                  <input
+                    id="product-compare-at-price"
+                    name="compareAtPrice"
+                    type="number"
+                    value={formData.compareAtPrice}
+                    onChange={handleChange}
+                    min="0"
+                    step="0.01"
+                    inputMode="decimal"
+                    placeholder="Optional"
+                    className="min-w-0 flex-1 px-4 py-3 text-gray-900 outline-none"
+                  />
+                </div>
+                <p className="mt-1.5 text-xs text-gray-400">Enter a higher original price to show this product in Diwali offers.</p>
               </div>
 
               <div>

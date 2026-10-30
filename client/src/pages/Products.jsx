@@ -11,20 +11,17 @@ const Products = () => {
   const [error, setError] = useState(false);
   const [search, setSearch] = useState(searchParams.get('search') || '');
   const [debouncedSearch, setDebouncedSearch] = useState(searchParams.get('search') || '');
-  const [category, setCategory] = useState(searchParams.get('category') || '');
   const [sort, setSort] = useState('');
   const [priceRange, setPriceRange] = useState({ min: '', max: '' });
   const [retryCount, setRetryCount] = useState(0);
-  const [offerOnly, setOfferOnly] = useState(searchParams.get('offer') === 'diwali');
-  const queryString = searchParams.toString();
+  const querySearch = searchParams.get('search') || '';
+  const category = searchParams.get('category') || '';
+  const offerOnly = searchParams.get('offer') === 'diwali';
 
   useEffect(() => {
-    const nextSearch = searchParams.get('search') || '';
-    setSearch(nextSearch);
-    setDebouncedSearch(nextSearch);
-    setCategory(searchParams.get('category') || '');
-    setOfferOnly(searchParams.get('offer') === 'diwali');
-  }, [queryString, searchParams]);
+    setSearch(querySearch);
+    setDebouncedSearch(querySearch);
+  }, [querySearch]);
 
   useEffect(() => {
     const timeout = window.setTimeout(() => setDebouncedSearch(search.trim()), 250);
@@ -88,11 +85,18 @@ const Products = () => {
 
   const clearFilters = () => {
     setSearch('');
-    setCategory('');
     setSort('');
     setPriceRange({ min: '', max: '' });
-    setOfferOnly(false);
     setSearchParams({});
+  };
+
+  const updateQueryFilter = (key, value) => {
+    setSearchParams((currentParams) => {
+      const nextParams = new URLSearchParams(currentParams);
+      if (value) nextParams.set(key, value);
+      else nextParams.delete(key);
+      return nextParams;
+    });
   };
 
   return (
@@ -133,12 +137,7 @@ const Products = () => {
                   type="checkbox"
                   checked={offerOnly}
                   onChange={(event) => {
-                    const selected = event.target.checked;
-                    setOfferOnly(selected);
-                    const nextParams = new URLSearchParams(searchParams);
-                    if (selected) nextParams.set('offer', 'diwali');
-                    else nextParams.delete('offer');
-                    setSearchParams(nextParams);
+                    updateQueryFilter('offer', event.target.checked ? 'diwali' : '');
                   }}
                   className="h-4 w-4 rounded border-orange-300 text-orange-700 focus:ring-orange-600"
                 />
@@ -167,7 +166,7 @@ const Products = () => {
                 </label>
                 <div className="space-y-2">
                   <button
-                    onClick={() => setCategory('')}
+                    onClick={() => updateQueryFilter('category', '')}
                     className={`w-full text-left px-4 py-2 rounded-lg transition ${
                       category === '' ? 'bg-emerald-50 font-medium text-emerald-900' : 'hover:bg-slate-50'
                     }`}
@@ -177,7 +176,7 @@ const Products = () => {
                   {categories.map((cat) => (
                     <button
                       key={cat.name}
-                      onClick={() => setCategory(cat.name)}
+                      onClick={() => updateQueryFilter('category', cat.name)}
                       className={`w-full text-left px-4 py-2 rounded-lg transition flex items-center ${
                         category === cat.name ? 'bg-emerald-50 font-medium text-emerald-900' : 'hover:bg-slate-50'
                       }`}
