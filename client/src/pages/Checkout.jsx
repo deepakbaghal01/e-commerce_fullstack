@@ -59,11 +59,12 @@ const Checkout = () => {
         clearCart();
         navigate('/my-orders');
       }
-    } catch (error) {
-      setError(error.response?.data?.message || 'Failed to place order');
+    } catch (requestError) {
+      console.error('Could not place order:', requestError);
+      setError(requestError.response?.data?.message || 'Failed to place order. Please try again.');
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   if (cart.length === 0) {
