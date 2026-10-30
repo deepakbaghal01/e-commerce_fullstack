@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import Navbar from './components/Navbar';
@@ -26,28 +26,38 @@ function App() {
           <div className="flex flex-col min-h-screen">
             <Navbar />
             <main className="flex-grow">
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/products" element={<Products />} />
-                <Route path="/products/:id" element={<ProductDetails />} />
-                <Route path="/cart" element={<Cart />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/verify-registration" element={<VerifyRegistration />} />
-                <Route path="/seller-register" element={<SellerRegister />} />
-                <Route path="/checkout" element={<Checkout />} />
-                <Route path="/account" element={<MyAccount />} />
-                <Route path="/my-orders" element={<MyOrders />} />
-                <Route path="/admin" element={<AdminDashboard />} />
-                <Route path="/add-product" element={<AddProduct />} />
-                <Route path="/seller-dashboard" element={<SellerDashboard />} />
-              </Routes>
+              <RouteContent />
             </main>
             <Footer />
           </div>
         </Router>
       </CartProvider>
     </AuthProvider>
+  );
+}
+
+function RouteContent() {
+  const { pathname } = useLocation();
+
+  return (
+    <div key={pathname} className="page-transition">
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/products" element={<Products />} />
+        <Route path="/products/:id" element={<ProductDetails />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/verify-registration" element={<VerifyRegistration />} />
+        <Route path="/seller-register" element={<SellerRegister />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/account" element={<MyAccount />} />
+        <Route path="/my-orders" element={<MyOrders />} />
+        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/add-product" element={<AddProduct />} />
+        <Route path="/seller-dashboard" element={<SellerDashboard />} />
+      </Routes>
+    </div>
   );
 }
 

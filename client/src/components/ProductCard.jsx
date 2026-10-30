@@ -103,7 +103,7 @@ const ProductCard = ({ product }) => {
           onClick={handleAddToCart}
           disabled={!inStock}
           aria-live="polite"
-          className="mt-auto min-h-10 w-full rounded-lg bg-emerald-800 px-3 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-900 focus:outline-none focus:ring-2 focus:ring-emerald-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-slate-300"
+          className={`cart-button mt-auto min-h-10 w-full rounded-lg bg-emerald-800 px-3 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-900 focus:outline-none focus:ring-2 focus:ring-emerald-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-slate-300 ${added ? 'is-added' : ''}`}
         >
           {!inStock ? 'Unavailable' : added ? 'Added to cart' : 'Add to cart'}
         </button>

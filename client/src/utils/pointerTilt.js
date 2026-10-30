@@ -3,6 +3,8 @@ export const updatePointerTilt = (event, intensity = 8) => {
 
   const { currentTarget, clientX, clientY } = event;
   const bounds = currentTarget.getBoundingClientRect();
+  if (!bounds.width || !bounds.height) return;
+
   const x = (clientX - bounds.left) / bounds.width;
   const y = (clientY - bounds.top) / bounds.height;
 

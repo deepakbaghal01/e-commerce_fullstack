@@ -84,7 +84,7 @@ const Navbar = () => {
   );
 
   return (
-    <header className="sticky top-0 z-40 border-b border-slate-200 bg-white shadow-sm">
+    <header className="site-navbar sticky top-0 z-40 border-b border-slate-200 bg-white shadow-sm">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <nav className="flex min-h-16 items-center gap-4 py-2" aria-label="Main navigation">
           <Link to="/" onClick={closeMenu} className="shrink-0 text-xl font-bold tracking-tight text-slate-950 sm:text-2xl">
@@ -168,7 +168,7 @@ const Navbar = () => {
               {cartIcon}
               <span className="hidden lg:inline">Cart</span>
               {totalItems > 0 && (
-                <span className="absolute -right-1 -top-0.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-emerald-800 px-1 text-xs font-semibold text-white" aria-hidden="true">
+                <span key={totalItems} className="cart-count absolute -right-1 -top-0.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-emerald-800 px-1 text-xs font-semibold text-white" aria-hidden="true">
                   {totalItems}
                 </span>
               )}
@@ -199,7 +199,7 @@ const Navbar = () => {
       </div>
 
       {menuOpen && (
-        <div id="mobile-navigation" className="border-t border-slate-100 bg-white px-4 py-3 shadow-lg sm:hidden">
+        <div id="mobile-navigation" className="mobile-navigation border-t border-slate-100 bg-white px-4 py-3 shadow-lg sm:hidden">
           <div className="mx-auto flex max-w-7xl flex-col gap-1">
             {isBuyer && (
               <>
@@ -236,13 +236,13 @@ const Navbar = () => {
         </div>
       )}
 
-      <nav className="border-t border-slate-100" aria-label="Shop by category">
+      <nav className="category-navigation border-t border-slate-100" aria-label="Shop by category">
         <div className="scrollbar-none mx-auto flex max-w-7xl gap-1 overflow-x-auto px-4 sm:px-6 lg:px-8">
           {categories.map((category) => (
             <Link
               key={category.label}
               to={category.to}
-              className="shrink-0 border-b-2 border-transparent px-3 py-3 text-sm font-medium capitalize text-slate-700 transition hover:border-emerald-800 hover:text-emerald-900"
+              className="nav-category-link shrink-0 border-b-2 border-transparent px-3 py-3 text-sm font-medium capitalize text-slate-700 transition hover:border-emerald-800 hover:text-emerald-900"
             >
               {category.label}
             </Link>

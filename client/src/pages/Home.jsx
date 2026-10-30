@@ -13,6 +13,12 @@ const categories = [
   { name: 'Other', icon: '✦', description: 'More to explore' }
 ];
 
+const formatPrice = (price) => new Intl.NumberFormat('en-IN', {
+  style: 'currency',
+  currency: 'INR',
+  maximumFractionDigits: 2
+}).format(Number(price) || 0);
+
 const Home = () => {
   const [products, setProducts] = useState([]);
   const [saleProducts, setSaleProducts] = useState([]);
@@ -63,18 +69,18 @@ const Home = () => {
     <div className="home-page">
       <section className="hero-3d overflow-hidden bg-[#f5f2ec]">
         <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-14 sm:px-6 md:grid-cols-2 md:py-20 lg:px-8">
-          <div className="max-w-xl">
-            <p className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-emerald-800">
+          <div className="hero-copy max-w-xl">
+            <p className="hero-kicker mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-emerald-800">
               A little more thoughtful shopping
             </p>
-            <h1 className="text-4xl font-semibold leading-tight tracking-tight text-slate-950 sm:text-5xl lg:text-6xl">
+            <h1 className="hero-title text-4xl font-semibold leading-tight tracking-tight text-slate-950 sm:text-5xl lg:text-6xl">
               Find things you&apos;ll <span className="text-emerald-800">love to keep.</span>
             </h1>
-            <p className="mt-5 max-w-lg text-base leading-7 text-slate-600 sm:text-lg">
+            <p className="hero-description mt-5 max-w-lg text-base leading-7 text-slate-600 sm:text-lg">
               Explore useful finds for your home, wardrobe, and everyday life.
               Browse the collection and find the right fit for you.
             </p>
-            <form onSubmit={handleSearch} className="mt-8 flex max-w-lg gap-2 rounded-xl bg-white p-2 shadow-sm ring-1 ring-slate-200 focus-within:ring-2 focus-within:ring-emerald-700">
+            <form onSubmit={handleSearch} className="hero-cta mt-8 flex max-w-lg gap-2 rounded-xl bg-white p-2 shadow-sm ring-1 ring-slate-200 focus-within:ring-2 focus-within:ring-emerald-700">
               <label className="sr-only" htmlFor="home-search">Search products</label>
               <input
                 id="home-search"
@@ -93,7 +99,7 @@ const Home = () => {
             </form>
             <Link
               to="/products"
-              className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-slate-700 transition hover:text-emerald-800"
+              className="hero-browse mt-5 inline-flex items-center gap-2 text-sm font-semibold text-slate-700 transition hover:text-emerald-800"
             >
               Browse all products <span aria-hidden="true">→</span>
             </Link>
@@ -107,6 +113,21 @@ const Home = () => {
             <div className="hero-orb hero-orb-one" aria-hidden="true" />
             <div className="hero-orb hero-orb-two" aria-hidden="true" />
             <div className="hero-ring" aria-hidden="true" />
+            {products.slice(0, 2).map((product, index) => (
+              <Link
+                key={product._id}
+                to={`/products/${product._id}`}
+                className={`hero-product hero-product-${index + 1} hidden sm:flex`}
+              >
+                {product.image && (
+                  <img src={product.image} alt="" loading="lazy" />
+                )}
+                <span className="min-w-0">
+                  <span className="block truncate text-xs font-semibold text-slate-900">{product.name}</span>
+                  <span className="mt-1 block text-xs font-medium text-emerald-800">{formatPrice(product.price)}</span>
+                </span>
+              </Link>
+            ))}
             <div className="hero-frame relative overflow-hidden rounded-[1.5rem] border border-white/60 bg-white/40 shadow-[0_30px_80px_rgba(15,23,42,0.14)]">
               <img
                 src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1000&auto=format&fit=crop&q=85"
@@ -130,7 +151,7 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="py-14 sm:py-16">
+      <section className="category-section py-14 sm:py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mb-7 flex items-end justify-between gap-4">
             <div>
@@ -150,7 +171,7 @@ const Home = () => {
                 onPointerMove={(event) => updatePointerTilt(event, 9)}
                 onPointerLeave={resetPointerTilt}
               >
-                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-xl text-emerald-800" aria-hidden="true">
+                <span className="category-icon flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-xl text-emerald-800" aria-hidden="true">
                   {category.icon}
                 </span>
                 <h3 className="mt-4 font-semibold text-slate-900 group-hover:text-emerald-800">{category.name}</h3>
@@ -165,7 +186,7 @@ const Home = () => {
       </section>
 
       {!loading && !error && saleProducts.length > 0 && (
-        <section className="overflow-hidden bg-[#7c2d12] py-12 text-white sm:py-14">
+        <section className="diwali-banner overflow-hidden bg-[#7c2d12] py-12 text-white sm:py-14">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="mb-7 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
               <div>
@@ -191,7 +212,7 @@ const Home = () => {
         </section>
       )}
 
-      <section className="bg-[#f8f8f6] py-14 sm:py-16">
+      <section className="home-products bg-[#f8f8f6] py-14 sm:py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mb-7 flex items-end justify-between gap-4">
             <div>
@@ -209,10 +230,10 @@ const Home = () => {
           {loading ? (
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {Array.from({ length: 4 }, (_, index) => (
-                <div key={index} className="animate-pulse rounded-2xl bg-white p-3">
-                  <div className="aspect-[4/3] rounded-xl bg-slate-200" />
-                  <div className="mt-4 h-4 w-3/4 rounded bg-slate-200" />
-                  <div className="mt-3 h-4 w-1/3 rounded bg-slate-200" />
+                <div key={index} className="rounded-2xl bg-white p-3">
+                  <div className="skeleton-surface aspect-[4/3] rounded-xl" />
+                  <div className="skeleton-surface mt-4 h-4 w-3/4 rounded" />
+                  <div className="skeleton-surface mt-3 h-4 w-1/3 rounded" />
                 </div>
               ))}
             </div>
