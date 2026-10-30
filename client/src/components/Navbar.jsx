@@ -141,7 +141,7 @@ const Navbar = () => {
                   </>
                 )}
                 {isAdmin && <Link to="/admin" className={linkClass}>Admin dashboard</Link>}
-                {!isSeller && !isAdmin && <Link to="/seller-register" className={linkClass}>Sell with us</Link>}
+                {!isAuthenticated && <Link to="/seller-register" className={linkClass}>Sell with us</Link>}
                 <Link to="/products?offer=diwali" className={linkClass}>Current offers</Link>
                 {!isAuthenticated ? (
                   <>
@@ -214,7 +214,7 @@ const Navbar = () => {
               </>
             )}
             {isAdmin && <Link to="/admin" onClick={closeMenu} className={linkClass}>Admin dashboard</Link>}
-            {!isSeller && !isAdmin && <Link to="/seller-register" onClick={closeMenu} className={linkClass}>Sell with us</Link>}
+            {!isAuthenticated && <Link to="/seller-register" onClick={closeMenu} className={linkClass}>Sell with us</Link>}
             {!isAuthenticated ? (
               <>
                 <Link to="/login" onClick={closeMenu} className={linkClass}>Log in</Link>

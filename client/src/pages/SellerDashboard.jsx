@@ -58,28 +58,6 @@ const SellerDashboard = () => {
     }
   };
 
-  const getVerificationBadge = () => {
-    if (user?.isVerified) {
-      return (
-        <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
-          ✓ Verified Seller
-        </span>
-      );
-    }
-    if (user?.verificationStatus === 'rejected') {
-      return (
-        <span className="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-medium">
-          Business details need updates
-        </span>
-      );
-    }
-    return (
-      <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium">
-        ⏳ Verification Pending
-      </span>
-    );
-  };
-
   if (loading) {
     return <div className="text-center py-8">Loading...</div>;
   }
@@ -95,29 +73,13 @@ const SellerDashboard = () => {
               <p className="text-purple-100 mt-2">Welcome, {user?.businessName || user?.name}</p>
             </div>
             <div className="flex items-center space-x-4">
-              {getVerificationBadge()}
+              <span className="rounded-full bg-white/15 px-3 py-1 text-sm font-medium text-white">
+                Seller account
+              </span>
             </div>
           </div>
         </div>
       </div>
-
-      {!user?.isVerified && (
-        <div className={`mx-auto mt-6 max-w-7xl rounded-xl border px-4 py-4 sm:px-6 lg:px-8 ${
-          user?.verificationStatus === 'rejected'
-            ? 'border-red-200 bg-red-50 text-red-900'
-            : 'border-amber-200 bg-amber-50 text-amber-950'
-        }`}>
-          <p className="font-semibold">
-            {user?.verificationStatus === 'rejected'
-              ? 'Your seller application needs changes before approval.'
-              : 'Your seller application is waiting for admin review.'}
-          </p>
-          {user?.verificationNotes && <p className="mt-1 text-sm">Review note: {user.verificationNotes}</p>}
-          <p className="mt-1 text-sm">
-            You can view your dashboard, but product listings are available after approval.
-          </p>
-        </div>
-      )}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Stats Cards */}

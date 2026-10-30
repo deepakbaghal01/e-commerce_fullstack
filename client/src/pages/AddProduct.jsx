@@ -16,7 +16,7 @@ const initialFormData = {
 const categories = ['Electronics', 'Clothing', 'Shoes', 'Accessories', 'Home', 'Other'];
 
 const AddProduct = () => {
-  const { isAuthenticated, isSeller, isAdmin, user, loading: authLoading } = useAuth();
+  const { isAuthenticated, isSeller, isAdmin, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState(initialFormData);
   const [submitting, setSubmitting] = useState(false);
@@ -40,8 +40,8 @@ const AddProduct = () => {
       return;
     }
 
-    if (!isAdmin && (!isSeller || user?.isVerified !== true)) {
-      setError('Your seller account must be approved before you can publish products.');
+    if (!isAdmin && !isSeller) {
+      setError('A seller account is required to publish products.');
       return;
     }
 
@@ -125,29 +125,23 @@ const AddProduct = () => {
     );
   }
 
-  if (!isAdmin && (!isSeller || user?.isVerified !== true)) {
-    const isRejected = user?.verificationStatus === 'rejected';
+  if (!isAdmin && !isSeller) {
     return (
       <div className="mx-auto flex min-h-[60vh] max-w-2xl items-center justify-center px-4 py-12">
         <div className="w-full rounded-2xl border border-amber-200 bg-amber-50 p-8 text-center">
           <h1 className="text-2xl font-bold text-slate-900">
-            {isSeller ? 'Seller approval required' : 'Seller account required'}
+            Seller account required
           </h1>
           <p className="mt-3 leading-6 text-slate-700">
-            {isRejected
-              ? 'Your seller application needs changes before you can publish products.'
-              : isSeller
-                ? 'Your application is waiting for admin approval. You can publish products after it is approved.'
-                : 'Register or sign in with a seller account to publish products.'}
+            Register or sign in with a seller account to publish products.
           </p>
-          {user?.verificationNotes && (
-            <p className="mt-3 rounded-lg bg-white/70 p-3 text-left text-sm text-slate-700">
-              Admin note: {user.verificationNotes}
-            </p>
+          {!isAuthenticated ? (
+            <Link to="/seller-register" className="mt-6 inline-flex rounded-lg bg-emerald-800 px-5 py-3 font-semibold text-white hover:bg-emerald-900">
+              Create a seller account
+            </Link>
+          ) : (
+            <p className="mt-4 text-sm text-slate-600">You are currently signed in with a buyer account.</p>
           )}
-          <Link to={isSeller ? '/seller-dashboard' : '/seller-register'} className="mt-6 inline-flex rounded-lg bg-emerald-800 px-5 py-3 font-semibold text-white hover:bg-emerald-900">
-            {isSeller ? 'View seller dashboard' : 'Create a seller account'}
-          </Link>
         </div>
       </div>
     );
