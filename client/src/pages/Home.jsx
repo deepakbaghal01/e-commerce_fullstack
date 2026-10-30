@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import ProductCard from '../components/ProductCard';
+import { resetPointerTilt, updatePointerTilt } from '../utils/pointerTilt';
 
 const categories = [
   { name: 'Electronics', icon: '⌁', description: 'Everyday tech' },
@@ -59,8 +60,8 @@ const Home = () => {
   };
 
   return (
-    <div className="bg-white">
-      <section className="overflow-hidden bg-[#f5f2ec]">
+    <div className="home-page">
+      <section className="hero-3d overflow-hidden bg-[#f5f2ec]">
         <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-14 sm:px-6 md:grid-cols-2 md:py-20 lg:px-8">
           <div className="max-w-xl">
             <p className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-emerald-800">
@@ -97,14 +98,23 @@ const Home = () => {
               Browse all products <span aria-hidden="true">→</span>
             </Link>
           </div>
-          <div className="relative mx-auto w-full max-w-lg">
-            <div className="absolute -inset-4 rotate-2 rounded-[2rem] bg-[#e1d9cb]" />
-            <img
-              src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1000&auto=format&fit=crop&q=85"
-              alt="A carefully arranged selection of clothing and accessories"
-              className="relative aspect-[4/3] w-full rounded-[1.5rem] object-cover shadow-xl"
-            />
-            <div className="absolute -bottom-5 left-4 rounded-xl bg-white px-5 py-4 shadow-lg sm:left-8">
+          <div
+            className="hero-visual relative mx-auto w-full max-w-lg"
+            onPointerMove={(event) => updatePointerTilt(event, 9)}
+            onPointerLeave={resetPointerTilt}
+          >
+            <div className="hero-glow absolute -inset-5 rotate-2 rounded-[2.2rem] bg-[#e1d9cb]" />
+            <div className="hero-orb hero-orb-one" aria-hidden="true" />
+            <div className="hero-orb hero-orb-two" aria-hidden="true" />
+            <div className="hero-ring" aria-hidden="true" />
+            <div className="hero-frame relative overflow-hidden rounded-[1.5rem] border border-white/60 bg-white/40 shadow-[0_30px_80px_rgba(15,23,42,0.14)]">
+              <img
+                src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1000&auto=format&fit=crop&q=85"
+                alt="A carefully arranged selection of clothing and accessories"
+                className="relative aspect-[4/3] w-full object-cover"
+              />
+            </div>
+            <div className="hero-badge absolute -bottom-5 left-4 rounded-xl bg-white/90 px-5 py-4 shadow-[0_18px_40px_rgba(15,23,42,0.12)] backdrop-blur-sm sm:left-8">
               <p className="text-xs font-medium uppercase tracking-wider text-slate-500">Your next favourite</p>
               <p className="mt-1 text-sm font-semibold text-slate-900">Could be one click away</p>
             </div>
@@ -136,7 +146,9 @@ const Home = () => {
               <Link
                 key={category.name}
                 to={`/products?category=${encodeURIComponent(category.name)}`}
-                className="group rounded-2xl border border-slate-200 bg-[#faf9f6] p-4 transition hover:-translate-y-0.5 hover:border-emerald-800/40 hover:bg-white hover:shadow-md sm:p-5"
+                className="tilt-card group rounded-2xl border border-slate-200 bg-[#faf9f6] p-4 transition duration-300 hover:border-emerald-800/40 hover:bg-white sm:p-5"
+                onPointerMove={(event) => updatePointerTilt(event, 9)}
+                onPointerLeave={resetPointerTilt}
               >
                 <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-xl text-emerald-800" aria-hidden="true">
                   {category.icon}

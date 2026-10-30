@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { resetPointerTilt, updatePointerTilt } from '../utils/pointerTilt';
 
 const formatPrice = (price) => new Intl.NumberFormat('en-IN', {
   style: 'currency',
@@ -32,7 +33,11 @@ const ProductCard = ({ product }) => {
   };
 
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white transition duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-lg">
+    <article
+      className="product-card-3d group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white transition duration-200 hover:border-slate-300"
+      onPointerMove={(event) => updatePointerTilt(event, 6)}
+      onPointerLeave={resetPointerTilt}
+    >
       <Link to={`/products/${product._id}`} className="relative block overflow-hidden bg-slate-100">
         <div className="aspect-[4/3]">
           {imageUnavailable || !product.image ? (
