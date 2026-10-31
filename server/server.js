@@ -23,6 +23,11 @@ app.use(cors({
     callback(null, !origin || clientOrigins.includes(origin));
   }
 }));
+app.post(
+  '/api/payments/razorpay/webhook',
+  express.raw({ type: 'application/json' }),
+  require('./controllers/paymentController').razorpayWebhook
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

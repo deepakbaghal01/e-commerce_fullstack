@@ -66,12 +66,31 @@ const OrderSchema = new mongoose.Schema({
   paymentMethod: {
     type: String,
     default: 'COD',
-    enum: ['COD', 'Card', 'UPI']
+    enum: ['COD', 'Card', 'UPI', 'Netbanking', 'Wallet', 'PayLater', 'EMI', 'Razorpay']
   },
   paymentStatus: {
     type: String,
     default: 'Pending',
-    enum: ['Pending', 'Completed', 'Failed']
+    enum: ['Pending', 'Completed', 'Failed', 'paid']
+  },
+  transactionId: {
+    type: String,
+    trim: true
+  },
+  razorpayOrderId: {
+    type: String,
+    trim: true
+  },
+  razorpayPaymentId: {
+    type: String,
+    trim: true
+  },
+  checkoutSessionId: {
+    type: String,
+    trim: true
+  },
+  razorpayOrderCreateLock: {
+    type: Date
   },
   orderStatus: {
     type: String,
@@ -83,5 +102,12 @@ const OrderSchema = new mongoose.Schema({
     default: Date.now
   }
 });
+
+OrderSchema.index(
+  { user: 1, checkoutSessionId: 1 },
+  { unique: true, partialFilterExpression: { checkoutSessionId: { $type: 'string' } } }
+);
+OrderSchema.index({ razorpayOrderId: 1 }, { sparse: true });
+OrderSchema.index({ razorpayPaymentId: 1 }, { sparse: true });
 
 module.exports = mongoose.model('Order', OrderSchema);
