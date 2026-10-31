@@ -256,7 +256,7 @@ const AdminDashboard = () => {
           <div className="bg-white rounded-lg shadow-md p-6">
             <h3 className="text-lg font-semibold text-gray-600">Total Revenue</h3>
             <p className="text-3xl font-bold text-blue-600 mt-2">
-              ${stats.totalRevenue.toFixed(2)}
+              ₹{stats.totalRevenue.toFixed(2)}
             </p>
           </div>
         </div>
@@ -613,9 +613,28 @@ const AdminDashboard = () => {
                     <div>
                       <p className="text-sm text-gray-500">Total</p>
                       <p className="font-bold text-blue-600">
-                        ${order.totalAmount.toFixed(2)}
+                        ₹{order.totalAmount.toFixed(2)}
                       </p>
                     </div>
+                  </div>
+                  <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 border-t border-gray-100 pt-4 text-sm">
+                    <p><span className="text-gray-500">Payment method:</span> {order.paymentMethod || 'COD'}</p>
+                    <p>
+                      <span className="text-gray-500">Payment status:</span>{' '}
+                      <span className={order.paymentStatus === 'paid' || order.paymentStatus === 'Completed' ? 'font-semibold text-green-700' : 'font-semibold text-amber-700'}>
+                        {order.paymentStatus || 'Pending'}
+                      </span>
+                    </p>
+                    {(order.transactionId || order.razorpayPaymentId) && (
+                      <p className="break-all">
+                        <span className="text-gray-500">Transaction ID:</span> {order.transactionId || order.razorpayPaymentId}
+                      </p>
+                    )}
+                    {order.razorpayOrderId && (
+                      <p className="break-all">
+                        <span className="text-gray-500">Razorpay order:</span> {order.razorpayOrderId}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -625,7 +644,7 @@ const AdminDashboard = () => {
                     {order.products.map((item, index) => (
                       <div key={index} className="flex items-center justify-between text-sm">
                         <span>{item.name} x {item.quantity}</span>
-                        <span className="font-semibold">${(item.price * item.quantity).toFixed(2)}</span>
+                        <span className="font-semibold">₹{(item.price * item.quantity).toFixed(2)}</span>
                       </div>
                     ))}
                   </div>

@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import api from '../services/api';
 
 const MyOrders = () => {
+  const [searchParams] = useSearchParams();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -43,6 +45,17 @@ const MyOrders = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <h1 className="text-3xl font-bold mb-8">My Orders</h1>
 
+      {searchParams.get('payment') === 'success' && (
+        <p role="status" className="mb-6 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-green-800">
+          Payment verified successfully. Your order is being processed.
+        </p>
+      )}
+      {searchParams.get('order') === 'placed' && (
+        <p role="status" className="mb-6 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-green-800">
+          Your order was placed successfully.
+        </p>
+      )}
+
       {orders.length === 0 ? (
         <div className="text-center py-8">
           <p className="text-gray-500 text-lg">No orders yet</p>
@@ -72,9 +85,28 @@ const MyOrders = () => {
                   <div>
                     <p className="text-sm text-gray-500">Total</p>
                     <p className="font-bold text-blue-600">
-                      ${order.totalAmount.toFixed(2)}
+                      ₹{order.totalAmount.toFixed(2)}
                     </p>
                   </div>
+                </div>
+                <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 border-t border-gray-100 pt-4 text-sm">
+                  <p><span className="text-gray-500">Payment:</span> {order.paymentMethod || 'COD'}</p>
+                  <p>
+                    <span className="text-gray-500">Payment status:</span>{' '}
+                    <span className={order.paymentStatus === 'paid' || order.paymentStatus === 'Completed' ? 'font-semibold text-green-700' : 'font-semibold text-amber-700'}>
+                      {order.paymentStatus || 'Pending'}
+                    </span>
+                  </p>
+                  {(order.transactionId || order.razorpayPaymentId) && (
+                    <p className="break-all">
+                      <span className="text-gray-500">Transaction ID:</span> {order.transactionId || order.razorpayPaymentId}
+                    </p>
+                  )}
+                  {order.razorpayOrderId && (
+                    <p className="break-all">
+                      <span className="text-gray-500">Razorpay order:</span> {order.razorpayOrderId}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -95,7 +127,7 @@ const MyOrders = () => {
                         </div>
                       </div>
                       <span className="font-semibold">
-                        ${(item.price * item.quantity).toFixed(2)}
+                        ₹{(item.price * item.quantity).toFixed(2)}
                       </span>
                     </div>
                   ))}
