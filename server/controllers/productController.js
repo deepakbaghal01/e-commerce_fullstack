@@ -1,4 +1,17 @@
 const Product = require('../models/Product');
+const {
+  buildCategoryFilter,
+  normalizeProductCategory
+} = require('../utils/productCategory');
+
+const serializeProduct = (product) => {
+  const serializedProduct = typeof product.toObject === 'function'
+    ? product.toObject()
+    : { ...product };
+
+  serializedProduct.category = normalizeProductCategory(serializedProduct.category);
+  return serializedProduct;
+};
 
 // @desc    Get all products
 // @route   GET /api/products
@@ -17,7 +30,7 @@ exports.getProducts = async (req, res) => {
 
     // Filter by category
     if (category) {
-      query.category = category;
+      Object.assign(query, buildCategoryFilter(category));
     }
 
     // Execute query
@@ -30,10 +43,12 @@ exports.getProducts = async (req, res) => {
       products.sort((a, b) => b.price - a.price);
     }
 
+    const serializedProducts = products.map(serializeProduct);
+
     res.status(200).json({
       success: true,
-      count: products.length,
-      products
+      count: serializedProducts.length,
+      products: serializedProducts
     });
   } catch (error) {
     res.status(500).json({
@@ -60,7 +75,7 @@ exports.getProductById = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      product
+      product: serializeProduct(product)
     });
   } catch (error) {
     res.status(500).json({
@@ -77,14 +92,18 @@ exports.getProductById = async (req, res) => {
 exports.createProduct = async (req, res) => {
   try {
     // Add the current user as the owner
-    req.body.owner = req.user.id;
+    const productData = {
+      ...req.body,
+      category: normalizeProductCategory(req.body.category),
+      owner: req.user.id
+    };
 
-    const product = await Product.create(req.body);
+    const product = await Product.create(productData);
 
     res.status(201).json({
       success: true,
       message: 'Product created successfully',
-      product
+      product: serializeProduct(product)
     });
   } catch (error) {
     res.status(500).json({
@@ -117,7 +136,12 @@ exports.updateProduct = async (req, res) => {
       });
     }
 
-    product = await Product.findByIdAndUpdate(req.params.id, req.body, {
+    const productUpdates = { ...req.body };
+    if (Object.prototype.hasOwnProperty.call(productUpdates, 'category')) {
+      productUpdates.category = normalizeProductCategory(productUpdates.category);
+    }
+
+    product = await Product.findByIdAndUpdate(req.params.id, productUpdates, {
       new: true,
       runValidators: true
     });
@@ -125,7 +149,7 @@ exports.updateProduct = async (req, res) => {
     res.status(200).json({
       success: true,
       message: 'Product updated successfully',
-      product
+      product: serializeProduct(product)
     });
   } catch (error) {
     res.status(500).json({

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { normalizeProductCategory } = require('../utils/productCategory');
 
 const ProductSchema = new mongoose.Schema({
   name: {
@@ -24,6 +25,8 @@ const ProductSchema = new mongoose.Schema({
   category: {
     type: String,
     required: [true, 'Please provide a product category'],
+    default: 'Other',
+    set: normalizeProductCategory,
     enum: ['Electronics', 'Clothing', 'Shoes', 'Accessories', 'Home', 'Other']
   },
   image: {
