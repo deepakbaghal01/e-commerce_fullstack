@@ -38,11 +38,11 @@ const createOrderFromCheckout = async ({
       throw checkoutError(400, 'Complete all shipping information before placing your order.');
     }
 
-    if (!['COD', 'Razorpay'].includes(paymentMethod)) {
-      throw checkoutError(400, 'Select Cash on Delivery or pay securely with Razorpay.');
+    if (!['COD', 'UPI', 'Netbanking', 'Card', 'Razorpay'].includes(paymentMethod)) {
+      throw checkoutError(400, 'Select a supported payment method.');
     }
 
-    if (paymentMethod === 'Razorpay') {
+    if (paymentMethod !== 'COD') {
       if (typeof checkoutSessionId !== 'string' || !/^[\w-]{16,100}$/.test(checkoutSessionId)) {
         throw checkoutError(400, 'Your checkout session is invalid. Refresh checkout and try again.');
       }
@@ -106,7 +106,7 @@ const createOrderFromCheckout = async ({
       }
     }
 
-    if (paymentMethod === 'Razorpay' && totalAmountInPaise < 100) {
+    if (paymentMethod !== 'COD' && totalAmountInPaise < 100) {
       throw checkoutError(400, 'Razorpay payments must total at least ₹1.00.');
     }
 
@@ -189,12 +189,17 @@ exports.createRazorpayOrder = async (req, res) => {
   let order;
   let lockAt;
   try {
+    const requestedPaymentMethod = req.body.paymentMethod || 'Razorpay';
+    if (!['UPI', 'Netbanking', 'Card', 'Razorpay'].includes(requestedPaymentMethod)) {
+      throw checkoutError(400, 'Select UPI, netbanking, card, or another supported online method.');
+    }
+
     const { keyId } = getRazorpayCredentials();
     const razorpay = getRazorpayClient();
     order = await createOrderFromCheckout({
       ...req.body,
       userId: req.user.id,
-      paymentMethod: 'Razorpay'
+      paymentMethod: requestedPaymentMethod
     });
 
     if (order.razorpayOrderId) {
