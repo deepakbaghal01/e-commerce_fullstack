@@ -76,7 +76,7 @@ const ProductCard = ({ product }) => {
       <div className="flex flex-1 flex-col p-3 sm:p-4">
         <div className="mb-2 flex items-center justify-between gap-2">
           <span className="truncate text-xs font-medium uppercase tracking-wider text-slate-500">
-            {product.category || 'Shop'}
+            {product.category || 'Other'}
           </span>
           {Number.isFinite(rating) && rating > 0 && (
             <span className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-slate-700" aria-label={`Rated ${rating.toFixed(1)} out of 5`}>

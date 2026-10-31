@@ -74,15 +74,6 @@ const Products = () => {
     };
   }, [debouncedSearch, category, sort, priceRange, offerOnly, retryCount]);
 
-  const categories = [
-    { name: 'Electronics', icon: '📱', color: 'from-blue-500 to-blue-600' },
-    { name: 'Clothing', icon: '👕', color: 'from-pink-500 to-pink-600' },
-    { name: 'Shoes', icon: '👟', color: 'from-purple-500 to-purple-600' },
-    { name: 'Accessories', icon: '⌚', color: 'from-orange-500 to-orange-600' },
-    { name: 'Home', icon: '🏠', color: 'from-green-500 to-green-600' },
-    { name: 'Other', icon: '✨', color: 'from-amber-500 to-amber-600' }
-  ];
-
   const clearFilters = () => {
     setSearch('');
     setSort('');
@@ -143,50 +134,6 @@ const Products = () => {
                 />
                 <span>Show Diwali offers only</span>
               </label>
-
-              {/* Search */}
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Search
-                </label>
-                <input
-                  type="text"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Search products..."
-                  aria-label="Search products"
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-700/20"
-                />
-              </div>
-
-              {/* Category Filter */}
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Category
-                </label>
-                <div className="space-y-2">
-                  <button
-                    onClick={() => updateQueryFilter('category', '')}
-                    className={`w-full text-left px-4 py-2 rounded-lg transition ${
-                      category === '' ? 'bg-emerald-50 font-medium text-emerald-900' : 'hover:bg-slate-50'
-                    }`}
-                  >
-                    All Categories
-                  </button>
-                  {categories.map((cat) => (
-                    <button
-                      key={cat.name}
-                      onClick={() => updateQueryFilter('category', cat.name)}
-                      className={`w-full text-left px-4 py-2 rounded-lg transition flex items-center ${
-                        category === cat.name ? 'bg-emerald-50 font-medium text-emerald-900' : 'hover:bg-slate-50'
-                      }`}
-                    >
-                      <span className="mr-2">{cat.icon}</span>
-                      {cat.name}
-                    </button>
-                  ))}
-                </div>
-              </div>
 
               {/* Price Range */}
               <div className="mb-6">

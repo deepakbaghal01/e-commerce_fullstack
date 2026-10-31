@@ -137,7 +137,7 @@ const ProductDetails = () => {
 
             <div className="mt-6 pt-6 border-t border-gray-200">
               <p className="text-sm text-gray-500">
-                Category: <span className="font-medium text-gray-700">{product.category}</span>
+                Category: <span className="font-medium text-gray-700">{product.category || 'Other'}</span>
               </p>
             </div>
           </div>
