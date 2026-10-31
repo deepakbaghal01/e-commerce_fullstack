@@ -42,6 +42,33 @@ const clearCheckoutSession = () => {
   }
 };
 
+const getRazorpayDisplayConfig = (paymentMethod) => {
+  const methodNames = {
+    UPI: 'UPI',
+    Netbanking: 'Netbanking',
+    Card: 'Debit or credit card'
+  };
+  const razorpayMethod = {
+    UPI: 'upi',
+    Netbanking: 'netbanking',
+    Card: 'card'
+  }[paymentMethod];
+
+  if (!razorpayMethod) return undefined;
+  return {
+    display: {
+      blocks: {
+        selectedMethod: {
+          name: `Pay using ${methodNames[paymentMethod]}`,
+          instruments: [{ method: razorpayMethod }]
+        }
+      },
+      sequence: ['block.selectedMethod'],
+      preferences: { show_default_blocks: false }
+    }
+  };
+};
+
 const Checkout = () => {
   const { cart, getSubtotal, clearCart } = useCart();
   const { user } = useAuth();
@@ -114,6 +141,7 @@ const Checkout = () => {
 
       const { data } = await api.post('/orders/razorpay/order', {
         ...orderData,
+        paymentMethod: formData.paymentMethod,
         checkoutSessionId: checkoutSession.current.id
       });
 
@@ -132,6 +160,7 @@ const Checkout = () => {
         },
         notes: { orderId: data.order._id },
         theme: { color: '#2563eb' },
+        config: getRazorpayDisplayConfig(formData.paymentMethod),
         modal: {
           ondismiss: () => {
             if (!failureHandled) {
@@ -297,18 +326,44 @@ const Checkout = () => {
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Payment Method
-                  </label>
-                  <select
-                    name="paymentMethod"
-                    value={formData.paymentMethod}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  <p className="mb-2 text-sm font-medium text-gray-700" id="payment-method-label">
+                    Choose Payment Method
+                  </p>
+                  <div
+                    role="radiogroup"
+                    aria-labelledby="payment-method-label"
+                    className="grid gap-3 sm:grid-cols-2"
                   >
-                    <option value="COD">Cash on Delivery</option>
-                    <option value="Razorpay">Online payment (UPI, cards and more)</option>
-                  </select>
+                    {[
+                      { value: 'COD', label: 'Cash on Delivery', detail: 'Pay when your order arrives' },
+                      { value: 'UPI', label: 'UPI', detail: 'Pay with a UPI app or ID' },
+                      { value: 'Netbanking', label: 'Netbanking', detail: 'Pay through your bank' },
+                      { value: 'Card', label: 'Debit / Credit Card', detail: 'Pay securely with Razorpay' },
+                      { value: 'Razorpay', label: 'Other online methods', detail: 'Wallets and other available methods' }
+                    ].map((method) => (
+                      <label
+                        key={method.value}
+                        className={`flex cursor-pointer items-start gap-3 rounded-lg border p-4 transition ${
+                          formData.paymentMethod === method.value
+                            ? 'border-blue-600 bg-blue-50 ring-1 ring-blue-600'
+                            : 'border-gray-300 hover:border-blue-300'
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="paymentMethod"
+                          value={method.value}
+                          checked={formData.paymentMethod === method.value}
+                          onChange={handleChange}
+                          className="mt-1 h-4 w-4 accent-blue-600"
+                        />
+                        <span>
+                          <span className="block text-sm font-semibold text-gray-900">{method.label}</span>
+                          <span className="mt-1 block text-xs text-gray-600">{method.detail}</span>
+                        </span>
+                      </label>
+                    ))}
+                  </div>
                 </div>
               </div>
 
