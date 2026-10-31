@@ -318,6 +318,27 @@ Open your browser and navigate to: `http://localhost:3000`
 - **Headers**: `Authorization: Bearer <token>`
 - **Body**: `{ products, shippingAddress, paymentMethod }`
 - **Response**: `{ success, message, order }`
+- This endpoint places Cash on Delivery orders. Prices and totals are read from MongoDB, not from cart prices sent by the client.
+
+#### Create or resume Razorpay order
+- **POST** `/orders/razorpay/order`
+- **Headers**: `Authorization: Bearer <token>`
+- **Body**: `{ products, shippingAddress, paymentMethod, checkoutSessionId }` (`paymentMethod`: `UPI`, `Netbanking`, `Card`, or `Razorpay`)
+- **Response**: `{ success, order, razorpayOrder, keyId }`
+
+#### Verify Razorpay payment
+- **POST** `/orders/razorpay/verify`
+- **Headers**: `Authorization: Bearer <token>`
+- **Body**: `{ orderId, razorpay_order_id, razorpay_payment_id, razorpay_signature }`
+
+#### Record Razorpay payment failure
+- **POST** `/orders/razorpay/failure`
+- **Headers**: `Authorization: Bearer <token>`
+- **Body**: `{ orderId, razorpayOrderId }`
+
+#### Razorpay webhook
+- **POST** `/payments/razorpay/webhook` (configured in Razorpay as `<backend-origin>/api/payments/razorpay/webhook`)
+- The endpoint verifies the `x-razorpay-signature` header against the raw request body.
 
 #### Get My Orders
 - **GET** `/orders/my-orders`
@@ -408,16 +429,47 @@ The application includes comprehensive error handling for:
 - Environment variables for sensitive data
 - Password field excluded from user queries by default
 
+## Razorpay Payments
+
+Online checkout uses Razorpay Standard Checkout in Test Mode. Cash on Delivery remains available. The backend builds each order total from current MongoDB product prices, creates the Razorpay order in INR, and marks an order `paid` only after verifying the checkout signature and confirming a captured payment with Razorpay. Razorpay webhooks provide a second server-verified payment update path. Card details, CVV, and UPI PIN are handled only by Razorpay Checkout and are never stored by this application.
+
+### Backend environment
+
+Add these values to `server/.env` for local development and to the Render service's Environment settings for deployment:
+
+```env
+RAZORPAY_KEY_ID=rzp_test_your_key_id
+RAZORPAY_KEY_SECRET=your_razorpay_test_key_secret
+RAZORPAY_WEBHOOK_SECRET=your_webhook_signing_secret
+```
+
+Create Test Mode API keys in the Razorpay Dashboard. Keep the key secret and webhook signing secret only on the backend; never add them to Vercel or `client/.env`. Configure a Razorpay webhook with URL `https://<your-render-host>/api/payments/razorpay/webhook`, the same webhook secret, and the `payment.captured`, `payment.failed`, and `order.paid` events. Use HTTPS in deployment.
+
+### Frontend and local setup
+
+The client uses the Vite proxy to `http://localhost:5000` in development. For Vercel, set `VITE_API_URL=https://<your-render-host>` in the project's Environment Variables and redeploy. The client adds `/api` automatically. On Render, set `CLIENT_ORIGINS` to the exact Vercel origin (comma-separated if multiple origins are needed) and configure the three Razorpay variables above. Never prefix Razorpay secrets with `VITE_`.
+
+Restart the local server after adding credentials, then test with Razorpay Test Mode credentials and the payment methods available to your test account:
+
+1. Sign in, add an in-stock product to the cart, and select online payment at checkout.
+2. Verify the Razorpay Checkout amount matches the server-priced order, then complete a test payment. Confirm My Orders shows `paid`, the Razorpay payment/transaction IDs, and order status `Processing`.
+3. Dismiss checkout and confirm the order remains unpaid; retry and complete payment. A failed payment should show a failure message, remain unpaid, and allow retry.
+4. Tamper with the amount sent by the browser or submit a modified/invalid checkout signature; the backend must still use database prices and reject invalid verification.
+5. Test Cash on Delivery to confirm the existing checkout still places an order.
+6. In the Razorpay Dashboard, send a test webhook and confirm that a valid signature is accepted while a request with an invalid signature is rejected.
+7. Check the Admin Dashboard for payment method, payment status, transaction ID, and order status.
+
+Payment endpoints are authenticated. Verification and failure updates are scoped to the signed-in user's order; the webhook is unauthenticated by design and accepts events only after validating Razorpay's signature against the raw request body.
+
 ## Future Improvements
 
 Potential enhancements for this project:
 
-1. **Payment Integration**: Integrate payment gateways like Stripe or PayPal
-2. **Image Upload**: Implement file upload for product images using Multer or Cloudinary
-3. **Product Reviews**: Add product review and rating system
-4. **Wishlist**: Add wishlist functionality for users
-5. **Email Notifications**: Send order confirmation emails
-6. **Advanced Search**: Implement more sophisticated search with filters
+1. **Image Upload**: Implement file upload for product images using Multer or Cloudinary
+2. **Product Reviews**: Add product review and rating system
+3. **Wishlist**: Add wishlist functionality for users
+4. **Email Notifications**: Send order confirmation emails
+5. **Advanced Search**: Implement more sophisticated search with filters
 7. **Product Variants**: Support for product variants (size, color, etc.)
 8. **Discount/Coupons**: Add discount code functionality
 9. **User Profile**: Allow users to update their profile information

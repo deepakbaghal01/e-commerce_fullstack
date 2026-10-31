@@ -109,38 +109,24 @@ const Products = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar Filters */}
-          <div className="lg:w-64 flex-shrink-0">
-            <div className="sticky top-24 rounded-xl border border-slate-200 bg-white p-5">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-lg font-bold text-gray-800">Filters</h2>
-                <button
-                  onClick={clearFilters}
-                  className="text-sm font-medium text-emerald-800 hover:text-emerald-950"
-                >
-                  Clear All
-                </button>
-              </div>
+        <div className="mb-6 rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
+          <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
+            <label className="flex min-h-11 cursor-pointer items-center gap-3 rounded-lg border border-orange-200 bg-orange-50 px-3 py-2 text-sm font-medium text-orange-950 xl:min-h-0">
+              <input
+                type="checkbox"
+                checked={offerOnly}
+                onChange={(event) => {
+                  updateQueryFilter('offer', event.target.checked ? 'diwali' : '');
+                }}
+                className="h-4 w-4 rounded border-orange-300 text-orange-700 focus:ring-orange-600"
+              />
+              <span>Show Diwali offers only</span>
+            </label>
 
-              <label className="mb-6 flex cursor-pointer items-center gap-3 rounded-lg border border-orange-200 bg-orange-50 px-3 py-3 text-sm font-medium text-orange-950">
-                <input
-                  type="checkbox"
-                  checked={offerOnly}
-                  onChange={(event) => {
-                    updateQueryFilter('offer', event.target.checked ? 'diwali' : '');
-                  }}
-                  className="h-4 w-4 rounded border-orange-300 text-orange-700 focus:ring-orange-600"
-                />
-                <span>Show Diwali offers only</span>
-              </label>
-
-              {/* Price Range */}
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Price Range (₹)
-                </label>
-                <div className="flex items-center space-x-2">
+            <div className="grid gap-4 sm:grid-cols-2 xl:flex xl:items-end">
+              <fieldset>
+                <legend className="mb-2 text-sm font-medium text-gray-700">Price Range (₹)</legend>
+                <div className="flex items-center gap-2">
                   <input
                     type="number"
                     min="0"
@@ -148,7 +134,7 @@ const Products = () => {
                     onChange={(e) => setPriceRange({ ...priceRange, min: e.target.value })}
                     placeholder="Min"
                     aria-label="Minimum price"
-                    className="w-full min-w-0 rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-700/20"
+                    className="w-full min-w-0 rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-700/20 sm:w-24"
                   />
                   <span className="text-gray-500">-</span>
                   <input
@@ -158,42 +144,50 @@ const Products = () => {
                     onChange={(e) => setPriceRange({ ...priceRange, max: e.target.value })}
                     placeholder="Max"
                     aria-label="Maximum price"
-                    className="w-full min-w-0 rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-700/20"
+                    className="w-full min-w-0 rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-700/20 sm:w-24"
                   />
                 </div>
-              </div>
+              </fieldset>
 
-              {/* Sort */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="product-sort" className="mb-2 block text-sm font-medium text-gray-700">
                   Sort By
                 </label>
                 <select
+                  id="product-sort"
                   value={sort}
                   onChange={(e) => setSort(e.target.value)}
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-700/20"
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-700/20 sm:min-w-48"
                 >
                   <option value="">Default</option>
                   <option value="price-asc">Price: Low to High</option>
                   <option value="price-desc">Price: High to Low</option>
                 </select>
               </div>
+
+              <button
+                onClick={clearFilters}
+                className="self-end rounded-lg px-3 py-2 text-left text-sm font-medium text-emerald-800 transition hover:bg-emerald-50 hover:text-emerald-950"
+              >
+                Clear All
+              </button>
             </div>
           </div>
+        </div>
 
-          {/* Products Grid */}
-          <div className="flex-1">
-            <div className="flex justify-between items-center mb-6">
-              <p className="text-gray-600">
-                {loading ? 'Loading products…' : `${products.length} ${products.length === 1 ? 'product' : 'products'}`}
-              </p>
+        {/* Products Grid */}
+        <div>
+          <div className="mb-6 flex items-center justify-between">
+            <p className="text-gray-600">
+              {loading ? 'Loading products…' : `${products.length} ${products.length === 1 ? 'product' : 'products'}`}
+            </p>
+          </div>
+
+          {loading ? (
+            <div className="flex justify-center py-12">
+              <div className="inline-block h-10 w-10 animate-spin rounded-full border-2 border-slate-200 border-b-emerald-800" role="status" aria-label="Loading products"></div>
             </div>
-
-            {loading ? (
-              <div className="flex justify-center py-12">
-                <div className="inline-block h-10 w-10 animate-spin rounded-full border-2 border-slate-200 border-b-emerald-800" role="status" aria-label="Loading products"></div>
-              </div>
-            ) : error ? (
+          ) : error ? (
               <div className="rounded-xl border border-amber-200 bg-amber-50 p-8 text-center" role="alert">
                 <h3 className="font-semibold text-slate-900">Products could not be loaded</h3>
                 <p className="mt-2 text-sm text-slate-600">Check your connection and try again.</p>
@@ -217,13 +211,12 @@ const Products = () => {
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {products.map((product) => (
                   <ProductCard key={product._id} product={product} />
                 ))}
               </div>
             )}
-          </div>
         </div>
       </div>
     </div>
